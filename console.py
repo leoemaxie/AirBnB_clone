@@ -25,6 +25,7 @@ class HBNBCommand(cmd.Cmd):
     def do_shell(self, line):
         """Run a previous command"""
         import os
+
         output = os.popen(line).read()
         print(output)
         self.last_output = output
@@ -39,7 +40,7 @@ class HBNBCommand(cmd.Cmd):
         if has_correct_args(args, 1):
             print(line[0])
 
-    def do_ahow(self, line):
+    def do_show(self, line):
         """
         Usage: show [Model] [ID]
         Prints the string representation of an instance based on the

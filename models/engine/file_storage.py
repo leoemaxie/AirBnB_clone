@@ -47,10 +47,14 @@ class FileStorage:
         Deserializes the JSON file to __objects only if the JSON file
         (__file_path) exists
         """
+        existing_obj = {}
         try:
             with open(self.__file_path, 'r') as file:
                 existing_obj = json.load(file)
-                for obj in self.__objects:
-                    print(obj)
         except FileNotFoundError:
             pass
+
+        for key, value in existing_obj.items():
+            instance = type(value["name"], tuple(value["__class__"]), {key: value})
+            if instance and issubclass(instance, BaseModel):
+                self.__objects.update({key: instance})

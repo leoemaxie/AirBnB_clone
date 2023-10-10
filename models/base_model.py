@@ -36,7 +36,6 @@ class BaseModel:
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
             storage.new(self)
-        print(repr(self))
 
     def save(self):
         """
@@ -69,12 +68,3 @@ class BaseModel:
             self.id,
             self.__dict__
         )
-
-    def __repr__(self):
-        """
-        String representation of an instance. Necessary to deserialize
-        instances from a file
-        """
-        args = self.to_dict()
-        print("{}()".format(**args))
-        return "hello"
