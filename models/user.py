@@ -8,10 +8,19 @@ from . import storage
 import uuid
 
 
-class BaseModel:
+class User(BaseModel):
     """
     The base for all other classes in the console.
+    Public class attributes:
+        email: string - empty string
+        password: string - empty string
+        first_name: string - empty string
+        last_name: string - empty string
     """
+    email = ""
+    password = ""
+    first_name = ""
+    last_name = ""
     def __init__(self, *args, **kwargs):
         """
         Creates a new instance and serializes it as JSON (provided it is not
@@ -36,14 +45,12 @@ class BaseModel:
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
             storage.new(self)
-        print(repr(self))
 
     def save(self):
         """
         Updates the public instance attribute updated_at with the current
         datetime
         """
-        self.updated_at = datetime.now()
         storage.save()
 
     def to_dict(self):
@@ -51,13 +58,10 @@ class BaseModel:
         Returns a dictionary containing all keys/values of __dict__ of the
         instance
         """
-        dictionary = {}
-        for key, value in self.__dict__.items():
-            if key == "created_at" or key == "updated_at":
-                value = value.isoformat()
-            dictionary.update({key: value})
-        dictionary["__class__"] = self.__class__.__name__
-        return dictionary
+        self.__dict__["__class__"] = self.__class__.__name__
+        self.__dict__["created_at"] = self.created_at.isoformat()
+        self.__dict__["updated_at"] = self.updated_at.isoformat()
+        return self.__dict__
 
     def __str__(self):
         """
@@ -69,12 +73,3 @@ class BaseModel:
             self.id,
             self.__dict__
         )
-
-    def __repr__(self):
-        """
-        String representation of an instance. Necessary to deserialize
-        instances from a file
-        """
-        args = self.to_dict()
-        print("{}()".format(**args))
-        return "hello"

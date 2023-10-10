@@ -22,9 +22,11 @@ class FileStorage:
 
     def all(self):
         """Returns the dictionary __objects"""
-        if self.__objects:
-            return self.__objects
-        return {}
+        if not self.__objects:
+            return {}
+        return {
+            key: value.to_dict() for key, value in self.__objects.items()
+        }
 
     def new(self, obj):
         """
@@ -32,13 +34,13 @@ class FileStorage:
         Args:
             obj: dict - The object to set
         """
-        self.__objects = obj
+        obj_id = "{}.{}".format(obj.__class__.__name__, obj.id)
+        self.__objects.update({obj_id: obj})
 
     def save(self):
         """Serializes __objects to the JSON file (path: __file_path)"""
-        if self.__objects:
-            with open(self.__file_path, 'w') as file:
-                json.dump(self.all(), file)
+        with open(self.__file_path, 'w') as file:
+            json.dump(self.all(), file)
 
     def reload(self):
         """
@@ -47,10 +49,8 @@ class FileStorage:
         """
         try:
             with open(self.__file_path, 'r') as file:
-                attr = json.load(file)
-                attr["created_at"] = datetime.fromisoformat(attr["created_at"])
-                attr["updated_at"] = datetime.fromisoformat(attr["updated_at"])
-                del attr["__class__"]
-                self.__objects = attr
+                existing_obj = json.load(file)
+                for obj in self.__objects:
+                    print(obj)
         except FileNotFoundError:
             pass
