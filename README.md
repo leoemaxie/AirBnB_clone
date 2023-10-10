@@ -2,19 +2,19 @@
 AirBnB fullstack website clone.
 
 ## Table of Content
-* [Overview](#overview)
+- [Overview](#overview)
   - [The Console](#the-console)
     - [Models](#models)
     - [Commands](#commands)
-* [Testing](#testing)
-* [License](#license)
-* [Authors](#authors)
+- [Testing](#testing)
+- [License](#license)
+- [Authors](#authors)
 
 ## Overview {#overview}
-### The Console {#the-console}
+### The Console 
 The console is a commandline interpreter that manipulates the resources and data of the website.
 
-#### Models {#models}
+#### Models 
 The console manipulates the following data:
 * User
 * Amenity
@@ -23,7 +23,7 @@ The console manipulates the following data:
 * State
 * Review
 
-#### Commands {#commands}
+#### Commands 
 The console accepts the following commands:
 * **all** -> `all [Model]`: Prints all string representation of all instances based on the class name.
 If Model is not provided, all instances are read and displayed from a JSON file.
@@ -34,14 +34,14 @@ If Model is not provided, all instances are read and displayed from a JSON file.
 * **show** -> `show [Model] [ID]`: Prints the string representation of an instance based on the class name and id.
 * **update** -> `update [Model] [ID] [AttributeName] [AttributeValue]`: Updates an instance based on the class name and id by adding or updating attribute and saves the change into a JSON file.
 
-## Testing {#testing}
+## Testing 
 Unittests can be carried out at the root of the project by runnung:
 ```bash
 python3 -m unittest discover tests
 ```
 
-## License {#license}
+## License 
 This project uses the MIT License as found [here](/LICENSE)
 
-## Authors {#authors}
+## Authors 
 Written by [Leo Emaxie](https://github.com/leoemaxie)
