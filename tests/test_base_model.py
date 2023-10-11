@@ -10,7 +10,7 @@ class BaseModelTestCase(unittest.TestCase):
     """Tests the base model"""
 
     def setUp(self):
-        """Sets up the base model"""
+        """Sets up the base models"""
         self.BaseModel = BaseModel()
         self.BaseModel2 = BaseModel(**self.BaseModel.to_dict())
 
@@ -47,6 +47,10 @@ class BaseModelTestCase(unittest.TestCase):
     def test_updated_at(self):
         """The public instance attribute (updated_at) should be a date"""
         self.assertIsInstance(self.BaseModel.updated_at, datetime)
+
+    def test_id(self):
+        """The public instance attribute (id) should be a string"""
+        self.assertIsInstance(self.BaseModel.id, str)
 
     def test_to_dict(self):
         """The to_dict method should return a dict"""
@@ -122,10 +126,10 @@ class BaseModelTestCase(unittest.TestCase):
         """
         self.assertIn("__class__", self.BaseModel2.to_dict())
 
-    def test_string(self):
+    def test_to_string(self):
         """
         The output string when a BaseModel is converted to a string should
-        follow this format
+        follow this format: [<class name>] (<self.id>) <self.__dict__>
         """
         string = "[{}] ({}) {}".format(
             self.BaseModel.__class__.__name__,

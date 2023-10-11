@@ -3,7 +3,6 @@
 FileStorage Module: Defines  attributes/methods for handling the serialization
 and deserialization of class instances using JSON.
 """
-from datetime import datetime
 import json
 
 
@@ -22,11 +21,7 @@ class FileStorage:
 
     def all(self):
         """Returns the dictionary __objects"""
-        if not self.__objects:
-            return {}
-        return {
-            key: value.to_dict() for key, value in self.__objects.items()
-        }
+        return self.__objects
 
     def new(self, obj):
         """
@@ -39,22 +34,36 @@ class FileStorage:
 
     def save(self):
         """Serializes __objects to the JSON file (path: __file_path)"""
+        obj_dict = {
+            key: value.to_dict() for key, value in self.__objects.items()
+        }
+
         with open(self.__file_path, 'w') as file:
-            json.dump(self.all(), file)
+            json.dump(obj_dict, file)
 
     def reload(self):
         """
         Deserializes the JSON file to __objects only if the JSON file
         (__file_path) exists
         """
+        from ..base_model import BaseModel
+        from ..user import User
+
+        classes = {
+            "BaseModel": BaseModel,
+            "User": User
+        }
         existing_obj = {}
+
         try:
             with open(self.__file_path, 'r') as file:
                 existing_obj = json.load(file)
         except FileNotFoundError:
             pass
 
-        """for key, value in existing_obj.items():
-            instance = type(value["name"], tuple(value["__class__"]), {key: value})
-            if instance and issubclass(instance, BaseModel):
-                self.__objects.update({key: instance})"""
+        for key in existing_obj:
+            obj = existing_obj[key]
+            class_name = obj["__class__"]
+            if class_name in classes:
+                instance = classes[class_name](**obj)
+                self.__objects.update({key: instance})
