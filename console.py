@@ -1,8 +1,15 @@
 #!/usr/bin/python3
 """Console Module: Contains the entry point of the command interpreter"""
-from models.base_model import BaseModel
-from models import storage
 import cmd
+
+from models.amenity import Amenity
+from models.base_model import BaseModel
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
+from models import storage
 
 
 class HBNBCommand(cmd.Cmd):
@@ -10,8 +17,71 @@ class HBNBCommand(cmd.Cmd):
     Command Line Interpreter to manipulate the resources and data of the
     website
     """
+    intro = "hnnb command line interpreter version 1.0.0 by Leo Emaxie"
     prompt = "(hbnb) "
     last_output = ""
+    args = []
+    class_id = ""
+    class_name = ""
+    failed = True
+    classes = {
+        "Amenity": Amenity,
+        "City": City,
+        "Place": Place,
+        "Review": Review,
+        "State": State,
+        "User": User,
+        "BaseModel": BaseModel
+    }
+
+    def precmd(self, line):
+        """Splits the line into arguments before execution"""
+        self.args = line.strip().split(" ")
+        self.class_name = ""
+        self.failed = True
+        commands = {
+            "all": 1,
+            "create": 1,
+            "destroy": 2,
+            "show": 2,
+            "update": 4
+        }
+        command = self.args[0]
+
+        if command not in commands.keys():
+            return line
+
+        # Checks the number pf arguments given. [all] is peculiar because it
+        # accepts 1 arguments or no argument.
+        args_count = commands[command]
+        if command == "all":
+            args_count = len(self.args) - 1
+            if args_count == 0:  # [all] doesn't have an argument, continue.
+                self.failed = False
+                return line
+            if args_count > 1:
+                print("** Too many arguments **")
+                return line
+        elif not has_correct_args(self.args, args_count):
+            return line
+
+        self.class_name = self.args[1]
+        if self.class_name not in self.classes:
+            print("** class doesn't exist **")
+            return line
+
+        if args_count > 1:
+            self.class_id = "{}.{}".format(self.class_name, self.args[2])
+            if self.class_id not in storage.all():
+                print("** no instance found **")
+                return line
+
+        self.failed = False
+        self.args.pop(0)
+        return line
+
+    def emptyline(self):
+        """Handles empty lines"""
 
     def do_EOF(self, line):
         """Handles the End of File Condition"""
@@ -25,7 +95,6 @@ class HBNBCommand(cmd.Cmd):
     def do_shell(self, line):
         """Run a previous command"""
         import os
-
         output = os.popen(line).read()
         print(output)
         self.last_output = output
@@ -36,9 +105,10 @@ class HBNBCommand(cmd.Cmd):
         Creates a new instance of a model, saves it to a JSON file and
         prints the id
         """
-        args = line.split(" ")
-        if has_correct_args(args, 1):
-            print(line[0])
+        if not self.failed:
+            instance = self.classes[self.class_name]()
+            instance.save()
+            print(instance.id)
 
     def do_show(self, line):
         """
@@ -46,12 +116,9 @@ class HBNBCommand(cmd.Cmd):
         Prints the string representation of an instance based on the
         class name and id
         """
-        args = line.split(" ")
-        if has_correct_args(line, 2):
+        if not self.failed:
             objs = storage.all()
-            obj_id = "{}.{}".format(args[0], args[1])
-            del objs[obj_id]
-            storage.reload()
+            print(objs[self.class_id])
 
     def do_all(self, line):
         """
@@ -61,12 +128,15 @@ class HBNBCommand(cmd.Cmd):
         If Model is not provided, all instances are read and displayed from a
         JSON file
         """
-        args = line.split(" ")
-        if has_correct_args(line, 2):
-            objs = storage.all()
-            obj_id = "{}.{}".format(args[0], args[1])
-            del objs[obj_id]
-            storage.reload()
+        if not self.failed:
+            objs = []
+            for key, value in storage.all().items():
+                if self.class_name:
+                    if self.class_name == value.__class__.__name__:
+                        objs.append(str(value))
+                else:
+                    objs.append(str(value))
+            print(objs)
 
     def do_update(self, line):
         """
@@ -74,12 +144,11 @@ class HBNBCommand(cmd.Cmd):
         Updates an instance based on the class name and id by adding or
         updating attribute and saves the change into a JSON file.
         """
-        args = line.split(" ")
-        if has_correct_args(line, 4):
+        if not self.failed:
             objs = storage.all()
-            obj_id = "{}.{}".format(args[0], args[1])
-            del objs[obj_id]
-            storage.reload()
+            obj = objs[self.class_id]
+            obj.__dict__.update({self.args[2]: self.args[3]})
+            storage.save()
 
     def do_destroy(self, line):
         """
@@ -87,12 +156,10 @@ class HBNBCommand(cmd.Cmd):
         Deletes an instance based on the class name and id and saves the change
         into a JSON file
         """
-        args = line.split(" ")
-        if has_correct_args(line, 2):
+        if not self.failed:
             objs = storage.all()
-            obj_id = "{}.{}".format(args[0], args[1])
-            del objs[obj_id]
-            storage.reload()
+            del objs[self.class_id]
+            storage.save()
 
 
 def has_correct_args(args, length):
@@ -102,18 +169,22 @@ def has_correct_args(args, length):
         args: list - commandline arguments passed to a command
         length: int - the appropriate number of arguments a command should have
     """
-    args_len = len(args)
+    args_count = len(args) - 1
 
-    if args_len == length:
+    if args_count == length:
         return True
-    elif args_len > length:
+    elif args_count > length:
         print("** Too many arguments **")
-    elif args_len == 1:
+    elif args_count == 0:
         print("** class name missing **")
-    elif args_len == 2:
+    elif args_count == 1:
         print("** instance id missing **")
+    elif args_count == 2:
+        print("** attribute missing **")
+    elif args_count == 3:
+        print("** value missing **")
     else:
-        print("** Too few arguments **")
+        print("** No argument passed **")
     return False
 
 

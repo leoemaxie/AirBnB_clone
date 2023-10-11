@@ -8,6 +8,6 @@ from .base_model import BaseModel
 class State(BaseModel):
     """
     Public class attributes:
-        name: str -> The name of the state. 
+        name: str -> The name of the state.
     """
     name = ""

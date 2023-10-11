@@ -12,6 +12,6 @@ from .base_model import BaseModel
 class Amenity(BaseModel):
     """
     Public class attributes:
-        name: str -> The name of the amenity. 
+        name: str -> The name of the amenity.
     """
     name = ""
