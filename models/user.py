@@ -8,10 +8,10 @@ from .base_model import BaseModel
 class User(BaseModel):
     """
     Public class attributes:
-        email: string - empty string
-        password: string - empty string
-        first_name: string - empty string
-        last_name: string - empty string
+        email: string -> The email address of a user.
+        password: string -> The password of a user.
+        first_name: string -> The first name of a user.
+        last_name: string -> The last name of a user.
     """
     email = ""
     password = ""
