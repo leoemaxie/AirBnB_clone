@@ -10,7 +10,7 @@ AirBnB fullstack website clone.
 - [License](#license)
 - [Authors](#authors)
 
-## Overview {#overview}
+## Overview
 ### The Console 
 The console is a commandline interpreter that manipulates the resources and data of the website.
 
