@@ -2,8 +2,7 @@
 """Tests the base model"""
 import unittest
 from datetime import datetime
-
-BaseModel = __import__("models.base_model", fromlist="base_model").BaseModel
+from models.base_model import BaseModel
 
 
 class BaseModelTestCase(unittest.TestCase):
