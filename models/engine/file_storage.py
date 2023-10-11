@@ -54,7 +54,7 @@ class FileStorage:
         except FileNotFoundError:
             pass
 
-        for key, value in existing_obj.items():
+        """for key, value in existing_obj.items():
             instance = type(value["name"], tuple(value["__class__"]), {key: value})
             if instance and issubclass(instance, BaseModel):
-                self.__objects.update({key: instance})
+                self.__objects.update({key: instance})"""
