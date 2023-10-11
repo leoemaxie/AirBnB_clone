@@ -27,10 +27,10 @@ The console manipulates the following data:
 The console accepts the following commands:
 * **all** -> `all [Model]`: Prints all string representation of all instances based on the class name.
 If Model is not provided, all instances are read and displayed from a JSON file.
-* **create** -> `create [Model]`: Creates a new instance of a model, saves it to a JSON file
-* **destroy** -> `destroy [Model] [ID]`: Deletes an instance based on the class name and id and saves the change into a JSON file
+* **create** -> `create [Model]`: Creates a new instance of a model, saves it to a JSON file.
+* **destroy** -> `destroy [Model] [ID]`: Deletes an instance based on the class name and id and saves the change into a JSON file.
 * **help** -> `help [command]`: Displays a short description of the usage of a command.
-* **quit** -> Quit command to exit the program
+* **quit** -> Quit command to exit the program.
 * **show** -> `show [Model] [ID]`: Prints the string representation of an instance based on the class name and id.
 * **update** -> `update [Model] [ID] [AttributeName] [AttributeValue]`: Updates an instance based on the class name and id by adding or updating attribute and saves the change into a JSON file.
 
