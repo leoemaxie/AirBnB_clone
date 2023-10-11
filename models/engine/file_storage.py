@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-FileStorage Module: Defines  attributes/methods for handling the serialization
+FileStorage Module: Defines attributes/methods for handling the serialization
 and deserialization of class instances using JSON.
 """
 import json
@@ -11,10 +11,9 @@ class FileStorage:
     Serializes instances to a JSON file and deserializes JSON file to instances
     Private class attribute:
         __file_path: string - path to the JSON file (ex: file.json)
-        __objects: dictionary - empty but will store all objects by
-                   <classname>.id'
-                   example: to store a BaseModel object with id=12121212,
-                   the key will be BaseModel.12121212
+        __objects: dictionary - Store all objects by <classname>.id
+        Example: to store a BaseModel object with id=12121212,the key will be
+        BaseModel.12121212
     """
     __file_path = "file.json"
     __objects = {}
@@ -46,12 +45,14 @@ class FileStorage:
         Deserializes the JSON file to __objects only if the JSON file
         (__file_path) exists
         """
-        from ..base_model import BaseModel
-        from ..user import User
-
         classes = {
-            "BaseModel": BaseModel,
-            "User": User
+            "Amenity": __import__("models.amenity").amenity.Amenity,
+            "City": __import__("models.city").city.City,
+            "Place": __import__("models.place").place.Place,
+            "Review": __import__("models.review").review.Review,
+            "State": __import__("models.state").state.State,
+            "User": __import__("models.user").user.User,
+            "BaseModel": __import__("models.base_model").base_model.BaseModel
         }
         existing_obj = {}
 

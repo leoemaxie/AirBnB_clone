@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 """
-User Module: Manages the users in the website application
+User Module: Manages the users of the website
 """
 from .base_model import BaseModel
 
 
 class User(BaseModel):
     """
-    The base for all other classes in the console.
     Public class attributes:
         email: string - empty string
         password: string - empty string
