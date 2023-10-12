@@ -17,7 +17,7 @@ class HBNBCommand(cmd.Cmd):
     Command Line Interpreter to manipulate the resources and data of the
     website
     """
-    intro = "hnnb command line interpreter version 1.0.0 by Leo Emaxie"
+    intro = "hbnb command line interpreter version 1.0.0 by Leo Emaxie"
     prompt = "(hbnb) "
     last_output = ""
     args = []
@@ -36,7 +36,8 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Splits the line into arguments before execution"""
-        self.args = line.strip().split(" ")
+        line = rewrite_line(line.strip(), self.classes)
+        self.args = line.split(" ")
         self.class_name = ""
         self.failed = True
         commands = {
@@ -160,6 +161,29 @@ class HBNBCommand(cmd.Cmd):
             objs = storage.all()
             del objs[self.class_id]
             storage.save()
+
+
+def rewrite_line(line, classes):
+    """
+    Helper function to rewrite the commandline if it begins with a
+    supported class.
+    Example: User.show(id) transforms to show [User] [id]
+    Args:
+        line: str - The line to execute.
+        classes: list<class> - A list of suppprted classes.
+    """
+    import re
+    if not re.search(r"^[A-Z][a-z]+([A-Z][a-z]+)?\.[a-z]+\([^)]*\)$", line):
+        return line
+
+    rewritten_line = re.sub(r"[ )\"\']+", "", line)
+    rewritten_line = re.sub(r"[(.,]", " ", rewritten_line)
+    args = rewritten_line.split(" ")
+
+    if args[0] not in classes:
+        return line
+    args[0], args[1] = args[1], args[0]
+    return " ".join(args)
 
 
 def has_correct_args(args, length):
