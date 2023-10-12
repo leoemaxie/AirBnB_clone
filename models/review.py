@@ -2,7 +2,7 @@
 """
 Review Module: Manages the reviews posted by users.
 """
-from .base_model import BaseModel
+from models.base_model import BaseModel
 
 
 class Review(BaseModel):

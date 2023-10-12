@@ -3,7 +3,7 @@
 Place Module: Manages the location of various accommodations auctioned by users
 in the website.
 """
-from .base_model import BaseModel
+from models.base_model import BaseModel
 
 
 class Place(BaseModel):

@@ -4,7 +4,7 @@ BaseModel Module: Defines all common attributes/methods for other classes.
 This class expose necessary functionalities to manage the console program.
 """
 from datetime import datetime
-from . import storage
+from models import storage
 import uuid
 
 

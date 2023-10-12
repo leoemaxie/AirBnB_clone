@@ -2,7 +2,7 @@
 """
 User Module: Manages the users of the website
 """
-from .base_model import BaseModel
+from models.base_model import BaseModel
 
 
 class User(BaseModel):

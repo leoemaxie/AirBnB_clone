@@ -10,6 +10,7 @@ from models.review import Review
 from models.state import State
 from models.user import User
 from models import storage
+from utils import rewrite, has_correct_args
 
 
 class HBNBCommand(cmd.Cmd):
@@ -23,7 +24,7 @@ class HBNBCommand(cmd.Cmd):
     args = []
     class_id = ""
     class_name = ""
-    failed = True
+    passed = False
     classes = {
         "Amenity": Amenity,
         "City": City,
@@ -36,13 +37,14 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Splits the line into arguments before execution"""
-        line = rewrite_line(line.strip(), self.classes)
+        line = rewrite(line.strip(), self.classes)
         self.args = line.split(" ")
         self.class_name = ""
-        self.failed = True
+        self.passed = False
         commands = {
             "all": 1,
             "create": 1,
+            "count": 1,
             "destroy": 2,
             "show": 2,
             "update": 4
@@ -58,7 +60,7 @@ class HBNBCommand(cmd.Cmd):
         if command == "all":
             args_count = len(self.args) - 1
             if args_count == 0:  # [all] doesn't have an argument, continue.
-                self.failed = False
+                self.passed = True
                 return line
             if args_count > 1:
                 print("** Too many arguments **")
@@ -77,7 +79,7 @@ class HBNBCommand(cmd.Cmd):
                 print("** no instance found **")
                 return line
 
-        self.failed = False
+        self.passed = True
         self.args.pop(0)
         return line
 
@@ -106,7 +108,7 @@ class HBNBCommand(cmd.Cmd):
         Creates a new instance of a model, saves it to a JSON file and
         prints the id
         """
-        if not self.failed:
+        if self.passed:
             instance = self.classes[self.class_name]()
             instance.save()
             print(instance.id)
@@ -117,7 +119,7 @@ class HBNBCommand(cmd.Cmd):
         Prints the string representation of an instance based on the
         class name and id
         """
-        if not self.failed:
+        if self.passed:
             objs = storage.all()
             print(objs[self.class_id])
 
@@ -129,7 +131,7 @@ class HBNBCommand(cmd.Cmd):
         If Model is not provided, all instances are read and displayed from a
         JSON file
         """
-        if not self.failed:
+        if self.passed:
             objs = []
             for key, value in storage.all().items():
                 if self.class_name:
@@ -139,13 +141,25 @@ class HBNBCommand(cmd.Cmd):
                     objs.append(str(value))
             print(objs)
 
+    def do_count(self, line):
+        """
+        Usage: count [Model]
+        Counts all the instances of a class.
+        """
+        if self.passed:
+            count = 0
+            for key, value in storage.all().items():
+                if self.class_name == value.__class__.__name__:
+                    count += 1
+            print(count)
+
     def do_update(self, line):
         """
         Usage: update [Model] [ID] [AttributeName] [AttributeValue]
         Updates an instance based on the class name and id by adding or
         updating attribute and saves the change into a JSON file.
         """
-        if not self.failed:
+        if self.passed:
             objs = storage.all()
             obj = objs[self.class_id]
             obj.__dict__.update({self.args[2]: self.args[3]})
@@ -157,59 +171,10 @@ class HBNBCommand(cmd.Cmd):
         Deletes an instance based on the class name and id and saves the change
         into a JSON file
         """
-        if not self.failed:
+        if self.passed:
             objs = storage.all()
             del objs[self.class_id]
             storage.save()
-
-
-def rewrite_line(line, classes):
-    """
-    Helper function to rewrite the commandline if it begins with a
-    supported class.
-    Example: User.show(id) transforms to show [User] [id]
-    Args:
-        line: str - The line to execute.
-        classes: list<class> - A list of suppprted classes.
-    """
-    import re
-    if not re.search(r"^[A-Z][a-z]+([A-Z][a-z]+)?\.[a-z]+\([^)]*\)$", line):
-        return line
-
-    rewritten_line = re.sub(r"[ )\"\']+", "", line)
-    rewritten_line = re.sub(r"[(.,]", " ", rewritten_line)
-    args = rewritten_line.split(" ")
-
-    if args[0] not in classes:
-        return line
-    args[0], args[1] = args[1], args[0]
-    return " ".join(args)
-
-
-def has_correct_args(args, length):
-    """
-    Helper function to check if a command has the right number of arguments
-    Args:
-        args: list - commandline arguments passed to a command
-        length: int - the appropriate number of arguments a command should have
-    """
-    args_count = len(args) - 1
-
-    if args_count == length:
-        return True
-    elif args_count > length:
-        print("** Too many arguments **")
-    elif args_count == 0:
-        print("** class name missing **")
-    elif args_count == 1:
-        print("** instance id missing **")
-    elif args_count == 2:
-        print("** attribute missing **")
-    elif args_count == 3:
-        print("** value missing **")
-    else:
-        print("** No argument passed **")
-    return False
 
 
 if __name__ == "__main__":
