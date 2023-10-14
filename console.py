@@ -18,14 +18,15 @@ class HBNBCommand(cmd.Cmd):
     Command Line Interpreter to manipulate the resources and data of the
     website
     """
+
     intro = "hbnb command line interpreter version 1.0.0 by Leo Emaxie"
     prompt = "(hbnb) "
-    last_output = ""
-    args = []
+    passed = False
+    attr = ""
+    value = ""
     class_id = ""
     class_name = ""
-    passed = False
-    classes = {
+    __classes = {
         "Amenity": Amenity,
         "City": City,
         "Place": Place,
@@ -37,10 +38,9 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Splits the line into arguments before execution"""
-        line = rewrite(line.strip(), self.classes)
-        self.args = line.split(" ")
-        self.class_name = ""
-        self.passed = False
+        line = rewrite(line.strip(), self.__classes)
+        args = line.split(" ")
+        command = args[0]
         commands = {
             "all": 1,
             "create": 1,
@@ -49,38 +49,34 @@ class HBNBCommand(cmd.Cmd):
             "show": 2,
             "update": 4
         }
-        command = self.args[0]
+        self.attr = ""
+        self.value = ""
+        self.class_id = ""
+        self.class_name = ""
+        self.passed = False
 
         if command not in commands.keys():
             return line
-
-        # Checks the number pf arguments given. [all] is peculiar because it
-        # accepts 1 arguments or no argument.
-        args_count = commands[command]
-        if command == "all":
-            args_count = len(self.args) - 1
-            if args_count == 0:  # [all] doesn't have an argument, continue.
-                self.passed = True
-                return line
-            if args_count > 1:
-                print("** Too many arguments **")
-                return line
-        elif not has_correct_args(self.args, args_count):
+        if not has_correct_args(args, commands.get(command, -1)):
             return line
 
-        self.class_name = self.args[1]
-        if self.class_name not in self.classes:
-            print("** class doesn't exist **")
-            return line
+        try:
+            self.class_name = args[1]
+            if self.class_name not in self.__classes:
+                print("** class doesn't exist **")
+                return line
 
-        if args_count > 1:
-            self.class_id = "{}.{}".format(self.class_name, self.args[2])
+            self.class_id = "{}.{}".format(self.class_name, args[2])
             if self.class_id not in storage.all():
                 print("** no instance found **")
                 return line
 
+            self.attr = args[3]
+            self.value = args[4]
+        except IndexError:
+            pass
+
         self.passed = True
-        self.args.pop(0)
         return line
 
     def emptyline(self):
@@ -95,13 +91,6 @@ class HBNBCommand(cmd.Cmd):
         """Quit command to exit the program"""
         return True
 
-    def do_shell(self, line):
-        """Run a previous command"""
-        import os
-        output = os.popen(line).read()
-        print(output)
-        self.last_output = output
-
     def do_create(self, line):
         """
         Usage: create [Model]
@@ -109,7 +98,7 @@ class HBNBCommand(cmd.Cmd):
         prints the id
         """
         if self.passed:
-            instance = self.classes[self.class_name]()
+            instance = self.__classes[self.class_name]()
             instance.save()
             print(instance.id)
 
@@ -162,7 +151,7 @@ class HBNBCommand(cmd.Cmd):
         if self.passed:
             objs = storage.all()
             obj = objs[self.class_id]
-            obj.__dict__.update({self.args[2]: self.args[3]})
+            obj.__dict__.update({self.attr: self.value})
             storage.save()
 
     def do_destroy(self, line):

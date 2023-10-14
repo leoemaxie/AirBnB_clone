@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """Unittests for the Review Model"""
 import unittest
-from tests.base_test import BaseTestCase
+from model_tests.base_test import BaseTestCase
 from models.review import Review
 
 
-class BaseModelTestCase(BaseTestCase, unittest.TestCase):
+class ReviewTestCase(BaseTestCase, unittest.TestCase):
     """Tests the Review Model"""
 
     def setUp(self):

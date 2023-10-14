@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """Unittests for the State Model"""
 import unittest
-from tests.base_test import BaseTestCase
+from model_tests.base_test import BaseTestCase
 from models.state import State
 
 
-class BaseModelTestCase(BaseTestCase, unittest.TestCase):
+class StateTestCase(BaseTestCase, unittest.TestCase):
     """Tests the State Model"""
 
     def setUp(self):

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """
-FileStorage Module: Defines attributes/methods for handling the serialization
-and deserialization of class instances using JSON.
+FileStorage Module: Defines attributes and methods for handling the
+serialization and deserialization of class instances using JSON.
 """
 import json
 
@@ -19,7 +19,7 @@ class FileStorage:
     __objects = {}
 
     def all(self):
-        """Returns the dictionary __objects"""
+        """Returns a dictionary of class objects"""
         return self.__objects
 
     def new(self, obj):

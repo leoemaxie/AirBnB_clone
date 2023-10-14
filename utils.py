@@ -12,7 +12,7 @@ def rewrite(line, classes):
         classes: list<class> - A list of suppprted classes.
     """
     import re
-    if not re.fullmatch(r"^[A-Z][a-z]+([A-Z][a-z]+)?\.[a-z]+\([^)]*\)$", line):
+    if not re.fullmatch(r"^([A-Z][a-z]+)+\.[a-z]+\([^)]*\)$", line):
         return line
 
     args = re.split(r"[(.,\")\']", line, maxsplit=3)
@@ -33,6 +33,10 @@ def has_correct_args(args, length):
         length: int - the appropriate number of arguments a command should have
     """
     args_count = len(args) - 1
+
+    # [all] is peculiar because it accepts 1 argument or no argument.
+    if args[0] == "all" and args_count < 2:
+        return True
 
     if args_count == length:
         return True

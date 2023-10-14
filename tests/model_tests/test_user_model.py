@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """Unittests for the User Model"""
 import unittest
-from tests.base_test import BaseTestCase
+from model_tests.base_test import BaseTestCase
 from models.user import User
 
 
-class BaseModelTestCase(BaseTestCase, unittest.TestCase):
+class UserTestCase(BaseTestCase, unittest.TestCase):
     """Tests the User Model"""
 
     def setUp(self):
