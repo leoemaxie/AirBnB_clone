@@ -79,7 +79,8 @@ class HBNBCommand(cmd.Cmd):
         return line
 
     def emptyline(self):
-        """Handles empty lines"""
+        """Do nothing when an empty line is encountered"""
+        pass
 
     def do_EOF(self, line):
         """Handles the End of File Condition"""
@@ -93,6 +94,7 @@ class HBNBCommand(cmd.Cmd):
     def do_create(self, line):
         """
         Usage: create [Model]
+               Model.create()
         Creates a new instance of a model, saves it to a JSON file and
         prints the id
         """
@@ -104,6 +106,7 @@ class HBNBCommand(cmd.Cmd):
     def do_show(self, line):
         """
         Usage: show [Model] [ID]
+               Model.show(ID)
         Prints the string representation of an instance based on the
         class name and id
         """
@@ -113,7 +116,8 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, line):
         """
-        Usage: all [Model]
+        Usage: all [Model] or all
+               Model.all()
         Prints all string representation of all instances based or no
         on the class name.
         If Model is not provided, all instances are read and displayed from a
@@ -132,6 +136,7 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, line):
         """
         Usage: count [Model]
+               Model.count()
         Counts all the instances of a class.
         """
         if self.passed:
@@ -144,6 +149,7 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, line):
         """
         Usage: update [Model] [ID] [AttributeName] [AttributeValue]
+               Model.update(AttributeName, AttributeValue)
         Updates an instance based on the class name and id by adding or
         updating attribute and saves the change into a JSON file.
         """
@@ -156,6 +162,7 @@ class HBNBCommand(cmd.Cmd):
     def do_destroy(self, line):
         """
         Usage: destroy [Model] [ID]
+               Model.destroy(ID)
         Deletes an instance based on the class name and id and saves the change
         into a JSON file
         """
