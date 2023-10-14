@@ -15,7 +15,7 @@ def rewrite(line, classes):
     if not re.fullmatch(r"^([A-Z][a-z]+)+\.[a-z]+\([^)]*\)$", line):
         return line
 
-    args = re.split(r"[(.,\")\']", line, maxsplit=3)
+    args = re.split(r"[(.,\")\']", line, maxsplit=5)
     args = [arg for arg in args if arg]
 
     if args[0] not in classes:

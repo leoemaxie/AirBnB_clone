@@ -18,8 +18,7 @@ class HBNBCommand(cmd.Cmd):
     Command Line Interpreter to manipulate the resources and data of the
     website
     """
-
-    intro = "hbnb command line interpreter version 1.0.0 by Leo Emaxie"
+    intro = "hbnb commandline interpreter version 1.0.0 by Leo Emaxie"
     prompt = "(hbnb) "
     passed = False
     attr = ""

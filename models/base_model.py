@@ -17,13 +17,15 @@ class BaseModel:
         Creates a new instance and serializes it as JSON (provided it is not
         from a dictionary representation)
 
+        Args:
+            - *args - list of arguments
+            - **kwargs - Necessary for the serialization of objects
+            using __dict__ if provided.
+
         Instance attribute:
             id (str) - A unique id of all inherited class
             created_at (datetime) - The time an inherited class was created.
             updated_at (datetime) - The time an inherited class was updated.
-
-        kwargs - Necessary for the serialization of objects using __dict__ if
-        provided.
         """
         if kwargs:
             for key, value in kwargs.items():
@@ -55,7 +57,7 @@ class BaseModel:
             if key == "created_at" or key == "updated_at":
                 value = value.isoformat()
             dictionary.update({key: value})
-        dictionary["__class__"] = self.__class__.__name__
+        dictionary["__class__"] = type(self).__name__
         return dictionary
 
     def __str__(self):
@@ -64,7 +66,7 @@ class BaseModel:
         [<class name>] (<self.id>) <self.__dict__>
         """
         return "[{}] ({}) {}".format(
-            self.__class__.__name__,
+            type(self).__name__,
             self.id,
             self.__dict__
         )

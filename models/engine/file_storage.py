@@ -28,7 +28,7 @@ class FileStorage:
         Args:
             obj: dict - The object to set
         """
-        obj_id = "{}.{}".format(obj.__class__.__name__, obj.id)
+        obj_id = "{}.{}".format(type(self).__name__, obj.id)
         self.__objects.update({obj_id: obj})
 
     def save(self):
