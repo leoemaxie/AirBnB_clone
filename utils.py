@@ -45,6 +45,10 @@ def has_correct_args(args, length):
     # [all] is peculiar because it accepts 1 argument or no argument.
     if args[0] == "all" and args_count < 2:
         return True
+    # [update] is peculiar because it accepts any number of arguments greater
+    # than 4. This is done because of flexibility in updating the model attr.
+    if args[0] == "update" and args_count > length:
+        return True
 
     if args_count == length:
         return True
