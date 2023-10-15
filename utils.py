@@ -15,9 +15,17 @@ def rewrite(line, classes):
     if not re.fullmatch(r"^([A-Z][a-z]+)+\.[a-z]+\([^)]*\)$", line):
         return line
 
-    args = re.split(r"[(.,\s)]+", re.sub(r"[\"\']", "", line), 6)
-    args = [arg for arg in args if arg]
+    dictionary = re.search(r"{[^}]+}", re.sub(r"[']", "\"", line))
+    args = []
 
+    if dictionary:
+        args = re.split(r"[(.)\"]", line, 5)
+        args[4] = "__dict__"
+        args[5] = dictionary.group()
+    else:
+        args = re.split(r"[(.,\s)]+", re.sub(r"[\"\']", "", line), 6)
+
+    args = [arg for arg in args if arg]
     if args[0] not in classes:
         return line
 

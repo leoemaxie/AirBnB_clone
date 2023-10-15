@@ -38,7 +38,7 @@ class HBNBCommand(cmd.Cmd):
     def precmd(self, line):
         """Splits the line into arguments before execution"""
         line = rewrite(line.strip(), self.__classes)
-        args = line.split(" ")
+        args = line.split(" ", 4)
         command = args[0]
         commands = {
             "all": 1,
@@ -149,14 +149,26 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, line):
         """
         Usage: update [Model] [ID] [AttributeName] [AttributeValue]
-               Model.update(AttributeName, AttributeValue)
+               Model.update(ID, AttributeName, AttributeValue)
+               Model.update(ID, **dictionary)
         Updates an instance based on the class name and id by adding or
         updating attribute and saves the change into a JSON file.
         """
         if self.passed:
             objs = storage.all()
             obj = objs[self.class_id]
-            obj.__dict__.update({self.attr: self.value})
+
+            if self.attr == "__dict__":
+                import json
+                try:
+                    dictionary = json.loads(self.value)
+                    for key, value in dictionary.items():
+                        setattr(obj, key, value)
+                except json.JSONDecodeError:
+                    print("** invalid dictionary **")
+            else:
+                setattr(obj, self.attr, self.value)
+
             storage.save()
 
     def do_destroy(self, line):
