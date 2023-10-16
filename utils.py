@@ -59,7 +59,7 @@ def has_correct_args(args, length):
     elif args_count == 1:
         print("** instance id missing **")
     elif args_count == 2:
-        print("** attribute missing **")
+        print("** attribute name missing **")
     elif args_count == 3:
         print("** value missing **")
     else:
