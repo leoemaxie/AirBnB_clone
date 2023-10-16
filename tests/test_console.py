@@ -13,8 +13,9 @@ class ConsoleTestCase(unittest.TestCase):
     def setUp(self):
         """Sets up the module docs"""
         self.docs = __import__("console", fromlist="console").__doc__
-        self.no_classname = "** class name missing **"
-        self.no_class = "** class doesn't exist **"
+        self.missing_classname = "** class name missing **"
+        self.invalid_class = "** class doesn't exist **"
+        self.missing_id = "** instance id missing **"
         self.no_instance = "** no instance found **"
 
     def tearDown(self):
@@ -117,54 +118,140 @@ class ConsoleTestCase(unittest.TestCase):
             self.assertNotEqual(output,  "*** No help on EOF")
             self.assertGreater(len(output), 20)
 
-    def test_create_cmd_no_classname(self):
+    def test_create_cmd_missing_classname(self):
         """An error message must be displayed if class name is not provided"""
         with patch("sys.stdout", new=StringIO()) as f:
             HBNBCommand().precmd("create")
             output = f.getvalue().strip()
-            self.assertEqual(output, self.no_classname)
+            self.assertEqual(output, self.missing_classname)
 
-    def test_destroy_cmd_no_classname(self):
+    def test_destroy_cmd_missing_classname(self):
         """An error message must be displayed if class name is not provided"""
         with patch("sys.stdout", new=StringIO()) as f:
             HBNBCommand().precmd("destroy")
             output = f.getvalue().strip()
-            self.assertEqual(output, self.no_classname)
+            self.assertEqual(output, self.missing_classname)
 
-    def test_count_cmd_no_classname(self):
+    def test_count_cmd_missing_classname(self):
         """An error message must be displayed if class name is not provided"""
         with patch("sys.stdout", new=StringIO()) as f:
             HBNBCommand().precmd("count")
             output = f.getvalue().strip()
-            self.assertEqual(output, self.no_classname)
+            self.assertEqual(output, self.missing_classname)
 
-    def test_show_cmd_no_classname(self):
+    def test_show_cmd_missing_classname(self):
         """An error message must be displayed if class name is not provided"""
         with patch("sys.stdout", new=StringIO()) as f:
             HBNBCommand().precmd("show")
             output = f.getvalue().strip()
-            self.assertEqual(output, self.no_classname)
+            self.assertEqual(output, self.missing_classname)
 
-    def test_update_cmd_no_classname(self):
+    def test_update_cmd_missing_classname(self):
         """An error message must be displayed if class name is not provided"""
         with patch("sys.stdout", new=StringIO()) as f:
             HBNBCommand().precmd("update")
             output = f.getvalue().strip()
-            self.assertEqual(output, self.no_classname)
+            self.assertEqual(output, self.missing_classname)
+
+    def test_all_cmd_missing_classname(self):
+        """
+        An error message should not be displayed if class name is not
+        provided to [all]"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("all")
+            output = f.getvalue().strip()
+            self.assertNotEqual(output, self.missing_classname)
+
+    def test_destroy_cmd_missing_id(self):
+        """An error message must be displayed if a model id is not given"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("destroy Review")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.missing_id)
+
+    def test_show_cmd_missing_id(self):
+        """An error message must be displayed if a model id is not given"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("show State")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.missing_id)
+
+    def test_update_cmd_missing_id(self):
+        """An error message must be displayed if a model id is not given"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("update Place")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.missing_id)
+
+    def test_count_cmd_invalid_class(self):
+        """An error message must be displayed if a class is unsupported"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("count Restaurant")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.invalid_class)
+
+    def test_all_cmd_invalid_class(self):
+        """An error message must be displayed if a class is unsupported"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("all Restaurant")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.invalid_class)
 
     def test_create_cmd_invalid_class(self):
         """An error message must be displayed if a class is unsupported"""
         with patch("sys.stdout", new=StringIO()) as f:
             HBNBCommand().precmd("create Restaurant")
             output = f.getvalue().strip()
-            self.assertEqual(output, self.no_class)
+            self.assertEqual(output, self.invalid_class)
 
-    def test_update_cmd_no_classname(self):
-        """An error message must be displayed if class name is not provided"""
+    def test_update_cmd_invalid_class(self):
+        """An error message must be displayed if a class is unsupported"""
         with patch("sys.stdout", new=StringIO()) as f:
-            HBNBCommand().precmd("update")
+            HBNBCommand().precmd("update Restaurant 123-456-789 name Mitch")
             output = f.getvalue().strip()
-            self.assertEqual(output, self.no_classname)
+            self.assertEqual(output, self.invalid_class)
+
+    def test_show_cmd_invalid_class(self):
+        """An error message must be displayed if a class is unsupported"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("show Restaurant 123-456-789")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.invalid_class)
+
+    def test_destroy_cmd_invalid_class(self):
+        """An error message must be displayed if a class is unsupported"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("destroy Restaurant 123-456-789")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.invalid_class)
+
+    def test_create_cmd_invalid_class(self):
+        """An error message must be displayed if a class is unsupported"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("create Restaurant")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.invalid_class)
+
+    def test_destroy_cmd_no_instance(self):
+        """An error message must be displayed if an instance doesn't exists"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("destroy Place 123-456-789")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.no_instance)
+
+    def test_show_cmd_no_instance(self):
+        """An error message must be displayed if an instance doesn't exists"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("show City 123-456-789")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.no_instance)
+
+    def test_update_cmd_no_instance(self):
+        """An error message must be displayed if an instance doesn't exists"""
+        with patch("sys.stdout", new=StringIO()) as f:
+            HBNBCommand().precmd("update User 123-456-789 age 89")
+            output = f.getvalue().strip()
+            self.assertEqual(output, self.no_instance)
 
 
 if __name__ == "__main__":

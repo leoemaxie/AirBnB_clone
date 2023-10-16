@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Unittests for the City Model"""
 import unittest
-from model_tests.base_test import BaseTestCase
+from test_models.base_test import BaseTestCase
 from models.city import City
 
 
